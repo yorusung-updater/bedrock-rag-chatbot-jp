@@ -1,4 +1,4 @@
-KNOWLEDGE_BASE_ID="<YOUR_KNOWLEDGE_BASE_ID>" # Please update
+KNOWLEDGE_BASE_ID=""
 
 REGION="ap-northeast-1"
-MODEL_ARN="anthropic.claude-3-sonnet-20240229-v1:0"
+MODEL_ARN="apac.amazon.nova-pro-v1:0"
