@@ -31,7 +31,7 @@ After=network.target
 
 [Service]
 User=ubuntu
-Environment='AWS_DEFAULT_REGION=us-west-2'
+Environment='AWS_DEFAULT_REGION=ap-northeast-1'
 WorkingDirectory=/home/ubuntu/bedrock-rag-chatbot/application
 ExecStartPre=/bin/bash -c 'sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8501'
 ExecStart=/bin/bash -c 'source /home/ubuntu/my_env/bin/activate && streamlit run streamlit.py --server.port 8501'

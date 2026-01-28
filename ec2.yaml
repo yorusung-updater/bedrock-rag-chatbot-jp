@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Description: RAG Chatbot EC2 Stack
 
 Parameters:
@@ -15,8 +15,8 @@ Parameters:
     Default: t2.small
 
   ChatbotAppInstanceAMI:
-    Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
-    Default: '/aws/service/canonical/ubuntu/server/focal/stable/current/amd64/hvm/ebs-gp2/ami-id'
+    Type: "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>"
+    Default: "/aws/service/canonical/ubuntu/server/focal/stable/current/amd64/hvm/ebs-gp2/ami-id"
 
 Resources:
   KnowledgeBaseIdParameter:
@@ -31,16 +31,16 @@ Resources:
     Properties:
       RoleName: RAGChatbotInstanceRole
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Principal:
               Service:
                 - ec2.amazonaws.com
             Action:
-              - 'sts:AssumeRole'
+              - "sts:AssumeRole"
       ManagedPolicyArns:
-        - 'arn:aws:iam::aws:policy/AdministratorAccess'
+        - "arn:aws:iam::aws:policy/AdministratorAccess"
 
   IAMInstanceProfile:
     Type: AWS::IAM::InstanceProfile
@@ -60,7 +60,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
-      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      AvailabilityZone: !Select [0, !GetAZs ""]
       CidrBlock: 172.16.10.0/24
       MapPublicIpOnLaunch: true
 
@@ -89,66 +89,65 @@ Resources:
         - !Ref chatbotAppSecurityGroup
       SubnetId: !Ref PublicSubnet
       UserData:
-        Fn::Base64:
-          !Sub |
-            #!/bin/bash
+        Fn::Base64: !Sub |
+          #!/bin/bash
 
-            # Update packages
-            sudo apt-get update -y
-            sleep 30
+          # Update packages
+          sudo apt-get update -y
+          sleep 30
 
-            # Install required packages
-            sudo apt-get install -y git
-            sleep 30
-            sudo apt-get install -y ec2-instance-connect
-            sleep 20
-            sudo apt-get install -y python3-pip
-            sleep 30
-            sudo apt-get install -y python3.8-venv
-            sleep 30
+          # Install required packages
+          sudo apt-get install -y git
+          sleep 30
+          sudo apt-get install -y ec2-instance-connect
+          sleep 20
+          sudo apt-get install -y python3-pip
+          sleep 30
+          sudo apt-get install -y python3.8-venv
+          sleep 30
 
-            # Clone repository
-            cd /home/ubuntu
-            sudo git clone https://github.com/ottlseo/bedrock-rag-chatbot.git
-            sleep 15
+          # Clone repository
+          cd /home/ubuntu
+          sudo git clone https://github.com/ottlseo/bedrock-rag-chatbot.git
+          sleep 15
 
-            # Create virtual environment
-            sudo python3 -m venv --copies /home/ubuntu/my_env
-            sleep 10
-            sudo chown -R ubuntu:ubuntu /home/ubuntu/my_env
-            sleep 10
-            source /home/ubuntu/my_env/bin/activate
-            sleep 20
+          # Create virtual environment
+          sudo python3 -m venv --copies /home/ubuntu/my_env
+          sleep 10
+          sudo chown -R ubuntu:ubuntu /home/ubuntu/my_env
+          sleep 10
+          source /home/ubuntu/my_env/bin/activate
+          sleep 20
 
-            cd bedrock-rag-chatbot/application
+          cd bedrock-rag-chatbot/application
 
-            # Install dependencies
-            pip3 install -r requirements.txt
-            sleep 100
+          # Install dependencies
+          pip3 install -r requirements.txt
+          sleep 100
 
-            # Create systemd service
-            sudo sh -c "cat <<EOF > /etc/systemd/system/streamlit.service
-            [Unit]
-            Description=Streamlit App
-            After=network.target
+          # Create systemd service
+          sudo sh -c "cat <<EOF > /etc/systemd/system/streamlit.service
+          [Unit]
+          Description=Streamlit App
+          After=network.target
 
-            [Service]
-            User=ubuntu
-            Environment='AWS_DEFAULT_REGION=us-west-2'
-            WorkingDirectory=/home/ubuntu/bedrock-rag-chatbot/application
-            ExecStartPre=/bin/bash -c 'sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8501'
-            ExecStart=/bin/bash -c 'source /home/ubuntu/my_env/bin/activate && streamlit run streamlit.py --server.port 8501'
-            Restart=always
+          [Service]
+          User=ubuntu
+          Environment='AWS_DEFAULT_REGION=ap-northeast-1'
+          WorkingDirectory=/home/ubuntu/bedrock-rag-chatbot/application
+          ExecStartPre=/bin/bash -c 'sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8501'
+          ExecStart=/bin/bash -c 'source /home/ubuntu/my_env/bin/activate && streamlit run streamlit.py --server.port 8501'
+          Restart=always
 
-            [Install]
-            WantedBy=multi-user.target
-            EOF"
-            sleep 30
-            
-            # Reload systemd daemon and start the service
-            sudo systemctl daemon-reload
-            sudo systemctl enable streamlit
-            sudo systemctl start streamlit
+          [Install]
+          WantedBy=multi-user.target
+          EOF"
+          sleep 30
+
+          # Reload systemd daemon and start the service
+          sudo systemctl daemon-reload
+          sudo systemctl enable streamlit
+          sudo systemctl start streamlit
 
 # Outputs:
 #   chatbotAppUrl:
