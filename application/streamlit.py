@@ -6,7 +6,7 @@ st.title("Welcome to AWS Multi-modal RAG Demo!")
 
 st.markdown('''- このデモは、検索拡張生成（RAG）を活用した生成AIアプリケーションを素早く構築・テストできるよう、シンプルなチャットボット形式で提供されています。''')
 st.markdown('''- 複雑に感じられがちなRAG構成、例えばVectorStoreのEmbedding作業からAmazon OpenSearchクラスターの作成、文書のインデックス化、Bedrockの設定までをテンプレートで自動化し、CDKの一度のデプロイだけでRAGの開発・テストを迅速に行いたい人がすぐ使えることを目標にしています。''')
-st.markdown('''- コードは[Github](https://github.com/ottlseo/bedrock-rag-chatbot/)で確認できます。''')
+st.markdown('''- コードは[Github](https://github.com/yorusung-updater/bedrock-rag-chatbot-jp/tree/ec2-manual-deployment/application)で確認できます。''')
 
 col1, col2, col3 = st.columns([1, 1, 1])
 with col1:
@@ -35,7 +35,7 @@ if btn2:
     answer = '''このチャットボットは[Streamlit](https://docs.streamlit.io/)で作られています。   
                 Streamlitは、シンプルなPythonコードで対話的なWebアプリを構築できるオープンソースライブラリです。    
                 以下のapp.pyコードで、Streamlitを使って簡単なチャットボットデモを作る方法を確認してください:
-                💁‍♀️ [app.pyコードを見る](https://github.com/ottlseo/bedrock-rag-chatbot/blob/main/application/streamlit.py)
+                💁‍♀️ [app.pyコードを見る](https://github.com/yorusung-updater/bedrock-rag-chatbot-jp/blob/ec2-manual-deployment/application/streamlit.py)
             '''
     st.chat_message("user").write(query)
     st.chat_message("assistant").write(answer)
